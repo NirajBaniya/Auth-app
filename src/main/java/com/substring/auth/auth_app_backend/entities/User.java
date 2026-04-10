@@ -24,8 +24,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id")
     private UUID id;
-    @Column(name = "user_email", unique = true)
+    @Column(name = "user_email", unique = true, length = 300)
     private String email;
+    @Column(name = "user_name")
     private String name;
     private String password;
     private String image;
@@ -37,11 +38,31 @@ public class User {
     private Instant createdAt = Instant.now();
     private Instant updatedAt = Instant.now();
     private String gender;
-    private Address address;
+   // private Address address;
 
     // provider means how it is signup like google, local or github
+    @Enumerated(EnumType.STRING)
     private Provider provider = Provider.LOCAL;
+
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+               joinColumns = @JoinColumn(name = "user_id"),
+               inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+
+
+    @PrePersist
+    protected void onCreate() {
+        Instant now = Instant.now();
+        if (createdAt == null ) createdAt = now;
+        updatedAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = Instant.now();
+    }
 
 
 }

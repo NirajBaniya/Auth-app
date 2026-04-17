@@ -1,7 +1,6 @@
 package com.substring.auth.auth_app_backend.services;
 
 import com.substring.auth.auth_app_backend.dtos.UserDto;
-import com.substring.auth.auth_app_backend.entities.User;
 
 public interface UserService {
 
@@ -15,7 +14,7 @@ public interface UserService {
     UserDto updateUser(UserDto userDto, String UserId);
 
     //delete User
-    UserDto deleteUser(String userId);
+    void deleteUser(String userId);
 
     //get user by id
     UserDto getUserById(String userId);

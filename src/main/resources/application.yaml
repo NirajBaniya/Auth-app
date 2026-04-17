@@ -27,7 +27,7 @@ server:
 #  hikari:
 #    pool-name: HikariCP
 #    maximum-pool-size: 5
-#    connection-timeout: 10000
+#    connection-timeout: `10000`
 #    idle-timeout: 600000
 #    max-lifetime: 1800000
 #    validation-timeout: 1800000

@@ -34,3 +34,9 @@ server:
 #    leak-detection-threshold: 0
 #    initialization-fail-timeout: -1
 
+
+
+
+logging:
+  level:
+   org.springframework.security: DEBUG

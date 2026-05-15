@@ -1,5 +1,7 @@
 package com.substring.auth.auth_app_backend.security;
 
+
+import com.substring.auth.auth_app_backend.entities.User;
 import com.substring.auth.auth_app_backend.helpers.UserHelper;
 import com.substring.auth.auth_app_backend.repositories.UserRepository;
 import io.jsonwebtoken.*;
@@ -9,11 +11,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.stream.Collector;
+import java.util.List;
+import java.util.Collection;
+
+import static jdk.internal.org.jline.reader.impl.LineReaderImpl.CompletionType.List;
 
 
 @Component
@@ -37,20 +49,50 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             String token = header.substring(7);
 
+            //Check for access token
+            if(!jwtService.isAccessToken(token)){
+
+                //if you want to pass message then pass later.
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             try {
 
             Jws<Claims> parse = jwtService.parse(token);
+
             Claims payload = parse.getPayload();
             String subject = payload.getSubject();
                 UUID userUuid = UserHelper.parseUUID(userId);
 
                 userRepository.findById(userUuid)
-                        .ifPresent(User user ->
+                        .ifPresent(User user -> {
+
+                            //Check for user enable or not.
+                            if (!user.isEnable()) {
+
                                 // user is found from database);
                                 //
-                                // List<GrandedAuthority> authorities = user.getRoles().streams.map(role -> (GrantedAuthority) () -> getRoles)
+                                List<GrandedAuthority> authorities = user.getRoles().streams.map(role -> (GrantedAuthority) () -> getRoles).stream()
+                                        .map(Role role -> new SimpleGrantedAuthority(role.getName())).collect(Collector.toList());
 
 
+                                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                                        user.getEmail(),
+                                        null,
+                                        authorities
+                                );
+
+                                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                                //final line: to set the authentication and security context
+                                if (SecurityContextHolder.getContext().getAuthentication() == null)
+                                    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+                            }
+
+                        });
 
 
             }

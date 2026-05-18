@@ -1,6 +1,8 @@
 package com.substring.auth.auth_app_backend.controller;
 
 
+import com.substring.auth.auth_app_backend.dtos.LoginRequest;
+import com.substring.auth.auth_app_backend.dtos.TokenResponse;
 import com.substring.auth.auth_app_backend.dtos.UserDto;
 import com.substring.auth.auth_app_backend.entities.User;
 import com.substring.auth.auth_app_backend.services.AuthService;
@@ -19,6 +21,29 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+
+
+    @PostMapping("/login")
+    public ResponseEntity<TokenResponse> login(
+        @RequestBody LoginRequest loginRequest
+    ){
+         // Authenticate
+        authenticate(loginRequest);
+
+    }
+
+    private void authenticate(LoginRequest loginRequest) {
+
+        try{
+
+        }
+        catch ("Exception"){
+
+        }
+
+
+    }
+
 
     @PostMapping("/register")
     public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto) {

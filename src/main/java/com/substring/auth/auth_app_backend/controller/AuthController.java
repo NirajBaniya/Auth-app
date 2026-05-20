@@ -5,11 +5,16 @@ import com.substring.auth.auth_app_backend.dtos.LoginRequest;
 import com.substring.auth.auth_app_backend.dtos.TokenResponse;
 import com.substring.auth.auth_app_backend.dtos.UserDto;
 import com.substring.auth.auth_app_backend.entities.User;
+import com.substring.auth.auth_app_backend.security.JwtService;
 import com.substring.auth.auth_app_backend.services.AuthService;
 import lombok.AllArgsConstructor;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,23 +27,43 @@ public class AuthController {
 
     private final AuthService authService;
 
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final ModelMapper mapper;
+
+
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(
-        @RequestBody LoginRequest loginRequest
-    ){
-         // Authenticate
+            @RequestBody LoginRequest loginRequest
+    ) {
+        // Authenticate
         authenticate(loginRequest);
+     User user = userRepositry.findByEmail(loginRequest).emails().orElseThrow(()-> new BadCredentialsException("Invaild Username or Password"));
 
+     if(user.isEnable()){
+         throw new DisabledException("User are Disabled");
+
+
+     }
+
+
+     //generate Token
+        String accessToken = jwtService.generateAccessToken(user);
+
+     TokenResponse.of(accessToken, "",jwtService.getAccessTtlSeconds(), mapper.map(user,UserDto.class));
+
+     return ResponseEntity.ok(tokenResponse);
     }
 
-    private void authenticate(LoginRequest loginRequest) {
+
+    private Authentication authenticate(LoginRequest loginRequest) {
 
         try{
-
+       return  authenticationManager.authenticate(new usernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
         }
-        catch ("Exception"){
-
+        catch (Exception e){
+            throw new BadCredentialsException("Username or Password is not vaild.")
         }
 
 

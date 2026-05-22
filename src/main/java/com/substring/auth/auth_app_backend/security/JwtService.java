@@ -2,12 +2,9 @@ package com.substring.auth.auth_app_backend.security;
 
 import com.substring.auth.auth_app_backend.entities.Role;
 import com.substring.auth.auth_app_backend.entities.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureAlgorithm;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,10 +17,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
-import static java.util.Map.*;
 
 @Service
 @Getter
@@ -40,7 +33,7 @@ public class JwtService {
 
 
     public JwtService(
-            @Value("${security.jwt.secret}") String secret, SecretKey key,
+            @Value("${security.jwt.secret}") String secret,
             @Value("${security.jwt.access-ttl-seconds}") long accessTtlSeconds,
             @Value("${security.jwt.refresh-ttl-seconds}") long refreshTtlSeconds,
             @Value("${security.jwt.issuer}") String issuer) {

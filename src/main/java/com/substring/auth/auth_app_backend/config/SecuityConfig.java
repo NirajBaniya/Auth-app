@@ -37,7 +37,7 @@ public class SecuityConfig {
                 authorizeHttpRequests
 
                         .requestMatchers(HttpMethod.POST,"/api/v1/auth/register").permitAll()
-                        .requestMatchers("api/v1/auth/login").permitAll()
+                        .requestMatchers("/api/v1/auth/login").permitAll()
                         .anyRequest().authenticated()
                 )
                .exceptionHandling(ex-> ex.authenticationEntryPoint((request, response,  e) ->{
@@ -45,7 +45,7 @@ public class SecuityConfig {
                   e.printStackTrace();
                   response.setStatus(401);
                   response.setContentType("application/json");
-                  String message = " unauthorized access " + e.getMessage();
+                  String message = e.getMessage();
                   Map<String, String> errorMap=Map.of("message", message, "status", String.valueOf(401), "statusCode", new Integer(401).toString());
                   var objectMapper = new ObjectMapper();
                   response.getWriter().write(objectMapper.writeValueAsString(errorMap));

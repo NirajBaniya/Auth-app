@@ -68,7 +68,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .ifPresent((User user) -> {
 
                             //Check for user enable or not.
-                            if (!user.isEnable()) {
+                            if(!user.isEnable()) {
+                                return;
+                            }
 
                                 // user is found from database);
                                 //
@@ -92,7 +94,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     SecurityContextHolder.getContext().setAuthentication(authentication);
 
 
-                            }
+
 
                         });
 

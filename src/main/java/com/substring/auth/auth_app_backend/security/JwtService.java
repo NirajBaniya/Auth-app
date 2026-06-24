@@ -105,8 +105,15 @@ public class JwtService {
 
     public boolean isAccessToken(String token) {
         Claims c = parse(token).getPayload();
-        return "access".equals(c.get("type"));
+        return "access".equals(c.get("typ"));
     }
+
+    public boolean isRefreshToken(String token){
+        Claims c = parse(token).getPayload();
+        return "refresh".equals(c.get("typ"));
+    }
+
+
 
     public UUID getUserId(String token) {
         Claims c = parse(token).getPayload();
@@ -116,6 +123,7 @@ public class JwtService {
 
     // for fetching the id
     public String getJti(String token) {
+
         return parse(token).getPayload().getId();
     }
 

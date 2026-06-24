@@ -2,12 +2,14 @@ package com.substring.auth.auth_app_backend.security;
 
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 @Service
+@Getter
 public class CookieService {
 
     private final String refreshTokenCookieName;
@@ -81,5 +83,6 @@ public class CookieService {
         response.setHeader(HttpHeaders.CACHE_CONTROL, "no-store");
         response.setHeader("Pragma", "no-cache");
     }
+
 
 }

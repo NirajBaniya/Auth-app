@@ -182,7 +182,7 @@ public class AuthController {
     public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
         readRefreshTokenFromRequest(null, request).ifPresent( token -> {
             try{
-               if(jwtService.isRefreshToken((token))) {
+               if(jwtService.isRefreshToken((token)))  {
                     String jti = jwtService.getJti(token);
                     refreshTokenRepository.findByJti(jti).ifPresent(rt -> {
                         rt.setRevoked(true);
